@@ -1,34 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { ButtonAdd, CardTask, Container, ContainerCards, ContainerInput, ContainerTasks, Input, LabelTask, Title } from "./styles";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [list, setList] = useState<{ id: number; task: string; }[]>([]);
+  const [task, setTask] = useState("");
+  const [id, setId] = useState(0)
+
+  function addTask(){
+    console.log(Object.keys(list))
+    const newTask = {
+      id,
+      task
+    }
+    setList(prevObject => [
+        ...prevObject, newTask
+    ])
+    setTask("")
+    setId(id + 1)
+  }
+
+  function removeTask(id: number){
+    setList(prevList => prevList.filter(object => object.id !== id));
+  }
+
+  function handleKeyPress(e: any){
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Container>
+      <Title>Tarefas</Title>
+
+      <ContainerTasks>
+        <ContainerInput>
+          <Input placeholder="Escreva uma tarefa" value={task} onChange={(e) => setTask(e.target.value)} onKeyDown={handleKeyPress}/>
+          <ButtonAdd onClick={addTask}>+</ButtonAdd>
+        </ContainerInput>
+
+        <ContainerCards>
+          {
+            list?.map((task) => {
+              return(
+                <CardTask>
+                  <LabelTask>{task.task}</LabelTask>
+                  <FaRegTrashCan onClick={() => removeTask(task.id)} size={24}/>
+                </CardTask>
+              )
+            })
+          }
+        </ContainerCards>
+      </ContainerTasks>
+    </Container>
   )
 }
 
